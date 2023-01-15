@@ -1,0 +1,14 @@
+{
+  "name": "losstie-cli",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "repository": "git@github.com:Losstie/losstie.cli.git",
+  "author": "losstie <losstie@outlook.com>",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18"
+  }
+}

@@ -1,0 +1,13 @@
+.DS_Store
+/.idea
+/.history
+.vscode/
+
+#SASS-cache
+.sass-cache
+
+# yarn
+/node_modules
+/dist
+.npmrc
+yarn-error.log
