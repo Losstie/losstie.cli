@@ -2,17 +2,63 @@ const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-exteact-plugin');
+const CrossOriginWebpackPlugin = require('cross-origin-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+const rucksack = require('rucksack-css');
 
 const defaultBabelConfig = require('./babelConfig');
 
 console.log(`node-version:${process.version}`);
 
-module.exports=function(defaultConfig){
+module.exports=function(customConfig){
+    const {babelPlugins, cssOptions={}, pxToRem, postcss, useImgCompression=true} = customConfig;
 
-    const babelConfig = [];
-    const cssOptions = [];
-    const postcssPlugins = [];
-    const arrImgs = [];
+    // babel-config
+    const babelConfig = {
+        ...defaultBabelConfig,
+        plugins: babelPlugins ? defaultBabelConfig.plugins.concat(babelPlugins): defaultBabelConfig.plugins,
+    };
+
+    let postcssPlugins = [
+        rucksack(),
+        autoprefixer({
+            overrideBrowerslist:['last 2 version', 'Firefox ESR', '>1%', 'ie>=9', 'IOS >= 8', 'Android >= 4']
+        })
+    ];
+    if(pxToRem) {
+        postcssPlugins = postcssPlugins.concat(require('postcss-pxtorem')({
+            rootValue:100,
+            selectorBlackList: [],
+            propList:['*']
+        }))
+    }
+
+    if(postcss) {
+        postcssPlugins = postcssPlugins.concat(postcss);
+    }
+
+    const arrImgs:any = [];
+    if(useImgCompression) {
+        arrImgs.push({
+            loader: '@game/image-webpack-loader', // 图片压缩
+            options: {
+                gifsicle: {
+                    interlaced: false,
+                },
+                optipng: {
+                    enabled:true,
+                },
+                pngquant: {
+                    quality:[0.3,0.8],
+                    speed:1,
+                },
+                mozjpeg:{
+                    quality: 65,
+                    preogressive:true
+                }
+            }
+        })
+    }
 
     const config = {
         mode: "development",
@@ -125,7 +171,16 @@ module.exports=function(defaultConfig){
             chunkIds: 'named',
 
         },
-        plugins: []
+        plugins: [
+            new CrossOriginWebpackPlugin(),
+            new MiniCssExtractPlugin({
+                filename: 'static/css/[name].[hash:8].css',
+                chunkFilename: 'static/css/[id].[chunkhash:8].css',
+                ignoreOrder: true,
+            })
+        ]
     }
+
+    return config;
 
 };
