@@ -1,6 +1,6 @@
 const webpackConfig = require('./config/index');
 const server = require('./server');
-const builder = require('./builder')
+const builder = require('./builder');
 
 module.exports = {
     /**
@@ -8,7 +8,7 @@ module.exports = {
      * @param {*} config 
      * @param {*} serverConfig 
      */
-    run: function(config, serverConfig){
+    run: function(config:{[propName:string]: any}, serverConfig:{[propName:string]: any}){
         server.run(webpackConfig(config), serverConfig);
     },
     /**
@@ -16,7 +16,7 @@ module.exports = {
      * @param {*} config 
      * @param {*} serverConfig 
      */
-    build:function(config, callback){
+    build:function(config:{[propName:string]: any}, callback: () => void){
         builder(webpackConfig(config)).run(callback);
     }
 }

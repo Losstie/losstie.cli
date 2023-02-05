@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-exteact-plugin');
 const CrossOriginWebpackPlugin = require('cross-origin-webpack-plugin');
 const autoprefixer = require('autoprefixer');
@@ -8,7 +7,7 @@ const rucksack = require('rucksack-css');
 
 const defaultBabelConfig = require('./babelConfig');
 
-console.log(`node-version:${process.version}`);
+console.log(`node-version:${process.version}`); 
 
 module.exports=function(customConfig){
     const {babelPlugins, cssOptions={}, pxToRem, postcss, useImgCompression=true} = customConfig;
@@ -40,7 +39,7 @@ module.exports=function(customConfig){
     const arrImgs:any = [];
     if(useImgCompression) {
         arrImgs.push({
-            loader: '@game/image-webpack-loader', // 图片压缩
+            loader: 'image-webpack-loader', // 图片压缩
             options: {
                 gifsicle: {
                     interlaced: false,
