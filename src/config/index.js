@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
-const MiniCssExtractPlugin = require('mini-css-exteact-plugin');
-const CrossOriginWebpackPlugin = require('cross-origin-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CrossOriginWebpackPlugin = require('crossorigin-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const rucksack = require('rucksack-css');
 
@@ -36,7 +36,7 @@ module.exports=function(customConfig){
         postcssPlugins = postcssPlugins.concat(postcss);
     }
 
-    const arrImgs:any = [];
+    const arrImgs = [];
     if(useImgCompression) {
         arrImgs.push({
             loader: 'image-webpack-loader', // 图片压缩
@@ -102,25 +102,6 @@ module.exports=function(customConfig){
                     ]
                 },
                 {
-                    test: /\.less$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                         {
-                            loader: 'css-loader',
-                            options: cssOptions
-                         },
-                         {
-                            loader: 'postcss-loader',
-                            options: {
-                                postcssOptions: {
-                                    plugins: postcssPlugins,
-                                }
-                            }
-                         },
-                         'less-loader',
-                    ]
-                },
-                {
                     test: /\.(jpe?g|png|gif)$/i,
                     type:'asset',
                     generator: {
@@ -166,12 +147,12 @@ module.exports=function(customConfig){
             ]
         },
         optimization: {
-            mouleIds: 'named',
+            moduleIds: 'named',
             chunkIds: 'named',
 
         },
         plugins: [
-            new CrossOriginWebpackPlugin(),
+            // new CrossOriginWebpackPlugin(),
             new MiniCssExtractPlugin({
                 filename: 'static/css/[name].[hash:8].css',
                 chunkFilename: 'static/css/[id].[chunkhash:8].css',

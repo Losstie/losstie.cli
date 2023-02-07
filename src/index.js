@@ -1,5 +1,5 @@
 const webpackConfig = require('./config/index');
-const server = require('./server');
+// const server = require('./server');
 const builder = require('./builder');
 
 module.exports = {
@@ -8,15 +8,15 @@ module.exports = {
      * @param {*} config 
      * @param {*} serverConfig 
      */
-    run: function(config:{[propName:string]: any}, serverConfig:{[propName:string]: any}){
-        server.run(webpackConfig(config), serverConfig);
-    },
+    // run: function(config, serverConfig){
+    //     server.run(webpackConfig(config), serverConfig);
+    // },
     /**
      * @description 构建应用
      * @param {*} config 
      * @param {*} serverConfig 
      */
-    build:function(config:{[propName:string]: any}, callback: () => void){
+    build:function(config, callback){
         builder(webpackConfig(config)).run(callback);
     }
 }

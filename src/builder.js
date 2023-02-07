@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 
 module.exports = function(webpackOptions){
-    const builder:{[propName:string]: any} = {};
+    const builder = {};
 
     builder.compiler = webpack(webpackOptions);
     builder.outputOptions = "minimal";
@@ -40,5 +40,12 @@ module.exports = function(webpackOptions){
             }
         }
     }
+
+    builder.run = function(callback) {
+        builder.callback = callback;
+        builder.compiler.run(builder.compilerCallback);
+    }
+
+    return builder;
 
 }

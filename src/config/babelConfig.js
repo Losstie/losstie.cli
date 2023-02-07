@@ -4,6 +4,7 @@
 
 module.exports = {
     presets: [
+        "@babel/preset-react",
         ["@babel/preset-env", 
         {
             "modules": "commonjs",
@@ -14,7 +15,6 @@ module.exports = {
             "corejs": 2,
             exclude:['proposal-dynamic-import']
         }],
-        "@babel/preset-react",
         "@babel/preset-typescript"
     ],
     plugins: [
