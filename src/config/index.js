@@ -2,15 +2,22 @@ const path = require('path');
 const fs = require('fs');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CrossOriginWebpackPlugin = require('crossorigin-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const rucksack = require('rucksack-css');
 
 const defaultBabelConfig = require('./babelConfig');
+const cwd = process.cwd();
+
+function abbspath (p) {
+    return p[0] === '/'?p:path.join(cwd, p);
+}
 
 console.log(`node-version:${process.version}`); 
 
 module.exports=function(customConfig){
-    const {babelPlugins, cssOptions={}, pxToRem, postcss, useImgCompression=true} = customConfig;
+    const {mode="development", entry, html, output, babelPlugins, cssOptions={}, pxToRem, postcss, useImgCompression=true} = customConfig;
 
     // babel-config
     const babelConfig = {
@@ -60,7 +67,15 @@ module.exports=function(customConfig){
     }
 
     const config = {
-        mode: "development",
+        mode,
+        entry:abbspath(entry),
+        output: {
+            path:path.resolve(__dirname, './dist'),
+            filename:'bundle-[name].js',
+            chunkFilename:'bundle-[name].js',
+            publicPath:'/',
+            ... output,
+        },
         resolve: {
             extensions: ['.js', '.jsx', 'ts', 'tsx', '.json'],
         },
@@ -152,13 +167,31 @@ module.exports=function(customConfig){
 
         },
         plugins: [
-            // new CrossOriginWebpackPlugin(),
+            new CrossOriginWebpackPlugin({ crossorigin: 'anonymous' }),
             new MiniCssExtractPlugin({
                 filename: 'static/css/[name].[hash:8].css',
                 chunkFilename: 'static/css/[id].[chunkhash:8].css',
                 ignoreOrder: true,
             })
         ]
+    }
+
+    if(html) {
+        config.plugins.push(new HtmlWebpackPlugin({
+            hash:false,
+            template: abbspath(html),
+            minify: {
+                removeComments:true,
+                collapseWhitespace:true,
+            }
+        }))
+    }
+
+    if(fs.existsSync('tsconfig.json')) {
+        config.plugins.push(new ForkTsCheckerWebpackPlugin({
+            formatter:'codeframe',
+            async:false,
+        }))
     }
 
     return config;
