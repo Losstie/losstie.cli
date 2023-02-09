@@ -74,7 +74,6 @@ module.exports=function(customConfig){
             filename:'bundle-[name].js',
             chunkFilename:'bundle-[name].js',
             publicPath:'/',
-            ... output,
         },
         resolve: {
             extensions: ['.js', '.jsx', 'ts', 'tsx', '.json'],
@@ -185,6 +184,11 @@ module.exports=function(customConfig){
                 collapseWhitespace:true,
             }
         }))
+    }
+    if(output) {
+        if(output.path) {
+            config.output.path = abbspath(output.path);
+        }
     }
 
     if(fs.existsSync('tsconfig.json')) {

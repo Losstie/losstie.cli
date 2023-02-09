@@ -13,6 +13,7 @@ module.exports = {
             },
             "useBuiltIns": "entry",
             "corejs": 2,
+            "loose": true,
             exclude:['proposal-dynamic-import']
         }],
         "@babel/preset-typescript"
@@ -24,6 +25,7 @@ module.exports = {
         "@babel/plugin-transform-runtime",
         ["@babel/plugin-proposal-decorators", { legacy: true }],
         ["@babel/plugin-proposal-private-methods", {loose: true}],
+        ["@babel/plugin-proposal-class-properties", { "loose": true }],
         ["@babel/plugin-proposal-private-property-in-object", {loose: true}]
     ],
 }
