@@ -8,11 +8,7 @@ const autoprefixer = require('autoprefixer');
 const rucksack = require('rucksack-css');
 
 const defaultBabelConfig = require('./babelConfig');
-const cwd = process.cwd();
-
-function abbspath (p) {
-    return p[0] === '/'?p:path.join(cwd, p);
-}
+const abspath = require('../utils').abspath;
 
 console.log(`node-version:${process.version}`); 
 
@@ -68,7 +64,7 @@ module.exports=function(customConfig){
 
     const config = {
         mode,
-        entry:abbspath(entry),
+        entry:abspath(entry),
         output: {
             path:path.resolve(__dirname, './dist'),
             filename:'bundle-[name].js',
@@ -178,7 +174,7 @@ module.exports=function(customConfig){
     if(html) {
         config.plugins.push(new HtmlWebpackPlugin({
             hash:false,
-            template: abbspath(html),
+            template: abspath(html),
             minify: {
                 removeComments:true,
                 collapseWhitespace:true,
@@ -187,7 +183,7 @@ module.exports=function(customConfig){
     }
     if(output) {
         if(output.path) {
-            config.output.path = abbspath(output.path);
+            config.output.path = abspath(output.path);
         }
     }
 
