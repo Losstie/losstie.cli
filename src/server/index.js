@@ -13,8 +13,11 @@ module.exports = function run(webpackConfig, serverConfig){
     localServer.use(bodyParser.json());
     localServer.use(bodyParser.urlencoded({extended: false}));
 
-    // ----------------本地mock服务-------------
+    const middleware = buildMiddleware(webpackConfig, serverConfig);
 
+    // ----------------本地mock服务-------------
+    localServer.use(middleware.basePathMiddleware);
+    localServer.use(middleware.webpackExtractPathMiddleware)
 
 
 }
