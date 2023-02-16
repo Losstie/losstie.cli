@@ -10,10 +10,12 @@ const { abspath, strToRegExp } = utils;
 module.exports = function(webpackConfig, serveConfig) {
     const { publicPath='/' } = webpackConfig;
     const { proxyConf, local, fallbackToIndex, getBasePath } = serverConfig;
+    let mockRootDir = serverConfig.mockRootDir ? abspath(serverConfig.mockRootDir) : '.'
 
     const webpackCompiler = webpack(webpackConfig);
     const webpackMiddleware = webpackDevMiddleware(webpackCompiler, { publicPath });
 
+    const staticMiddleware = koa.static(mockRootDir);
 
     return {
         /**
@@ -54,7 +56,14 @@ module.exports = function(webpackConfig, serveConfig) {
                 }
             });
         },
-        staticMiddleware: function(req, res, next) {
+        /**
+         * @description
+         * @param {*} req 
+         * @param {*} res 
+         * @param {*} next 
+         * @returns 
+         */
+        staticMockedMiddleware: function(req, res, next) {
             const matched = localPathMap.some((item) => {
                 const url = req.url;
                 req.url = req.url.replace(item[0], item[1]);
@@ -68,7 +77,28 @@ module.exports = function(webpackConfig, serveConfig) {
 
             const mockFilePath = path.join(mackRootDir, req.url);
             if(!/\..+$/.test(req.url)) {
-                
+                let mockJSFilePath = mockFilePath.endsWith('js') ? mockFilePath : `${mockFilePath}.js`;
+                let hasMockJsFile = fs.existsSync(mockFilePath) && fs.statSync(mockFilePath).isFile();
+
+                if(hasMockJsFile) {
+                    delete require.cache[require.resolve(mockFilePath)];
+                    require(mockFilePath)(req, res, function(res){
+                        if(Object.prototype.toString.call(res).slice(8, -1) === 'Object') {
+                            res.set('Content-Type', 'application/json');
+                            return res.end(JSON.stringify(res));
+                        }
+                        return res.end(res);
+                    });
+                } else {
+                    if(!req.url.endsWith('.json')) {
+                        req.url += '.json';
+                    }
+                    req.method = 'GET';
+                    staticMiddleware.apply(this, arguments);
+                }
+            } else {
+                req.method = 'GET';
+                staticMiddleware.apply(this, arguments);
             }
         }
     
